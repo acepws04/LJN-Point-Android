@@ -11,8 +11,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract project
-        run: unzip -q LJN_Point_Android_WebView_GitHub_Actions.zip -d extracted
+      - name: Extract Android project
+        run: |
+          unzip -q LJN_Point_Android_WebView_GitHub_Actions.zip -d extracted
+          find extracted -name settings.gradle -print
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -33,7 +35,8 @@ jobs:
 
       - name: Build APK
         run: |
-          PROJECT_DIR=$(find extracted -type f -name settings.gradle -print -quit | xargs dirname)
+          PROJECT_DIR=$(find extracted -name settings.gradle -print -quit | xargs dirname)
+          test -n "$PROJECT_DIR"
           cd "$PROJECT_DIR"
           gradle assembleDebug --no-daemon
           mkdir -p "$GITHUB_WORKSPACE/apk-output"
